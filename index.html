@@ -1,0 +1,1578 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="images/logo.ico" type="image/x-icon" />
+    <title>7T RENDERING</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #6c63ff;
+        --secondary: #ff6584;
+        --dark: #1a1a2e;
+        --light: #f5f5f7;
+        --gray: #8a8aa3;
+      }
+
+      #loader {
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        background: #1a1a2e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        transition:
+          opacity 0.6s ease,
+          visibility 0.6s;
+      }
+
+      #loader-logo {
+        width: 256px;
+        height: auto;
+        opacity: 0;
+        transform: scale(1.1);
+        animation: logoFade 1s ease forwards;
+      }
+
+      @keyframes logoFade {
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      #progress-bar {
+        width: 0%;
+        height: 3px;
+        background: #6c63ff;
+        position: absolute;
+        bottom: 40px;
+        left: 0;
+        transition: width 0.2s ease;
+        box-shadow: 0 0 10px #6c63ff;
+      }
+
+      #loader h1 {
+        font-family: "Montserrat", sans-serif;
+        font-size: 3rem;
+        color: white;
+        letter-spacing: 2px;
+      }
+
+      #loader span {
+        color: #6c63ff;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        line-height: 1.6;
+        color: var(--dark);
+        background-color: var(--light);
+        overflow-x: hidden;
+        cursor: default;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .sound-indicator {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px 15px;
+        border-radius: 20px;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 9999;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .sound-indicator.active {
+        display: flex;
+      }
+
+      #musicIcon {
+        font-size: 18px;
+        margin-right: 0px;
+      }
+
+      .sound-wave {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .sound-wave span {
+        display: inline-block;
+        width: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+        animation: soundWave 1.2s ease-in-out infinite;
+      }
+
+      .sound-wave span:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .sound-wave span:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .sound-wave span:nth-child(4) {
+        animation-delay: 0.3s;
+      }
+
+      @keyframes soundWave {
+        0%,
+        100% {
+          height: 8px;
+        }
+        50% {
+          height: 16px;
+        }
+      }
+
+      .sound-wave.paused span {
+        animation-play-state: paused;
+      }
+
+      .hero-image-pop {
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .hero-image-pop.btn {
+        cursor: pointer;
+      }
+
+      .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      .fade-in-delay-1 {
+        animation-delay: 0.2s;
+      }
+
+      .fade-in-delay-2 {
+        animation-delay: 0.4s;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      header {
+        background-color: rgba(26, 26, 46, 0.95);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        padding: 15px 0;
+        transition: all 0.3s ease;
+      }
+
+      header.scrolled {
+        padding: 10px 0;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-family: "Montserrat", sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: white;
+        text-decoration: none;
+      }
+
+      .logo span {
+        color: var(--primary);
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+      }
+
+      .nav-links li {
+        margin-left: 30px;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary);
+      }
+
+      .hamburger {
+        display: none;
+        cursor: pointer;
+        font-size: 24px;
+        color: white;
+      }
+
+      .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        background:
+          linear-gradient(rgba(26, 26, 46, 0.8), rgba(26, 26, 46, 0.9)),
+          url("images/bg.jpg");
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+        position: relative;
+      }
+
+      .hero-content h1 {
+        font-family: "Montserrat", sans-serif;
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+      }
+
+      .hero-content p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 30px;
+        color: #ddd;
+      }
+
+      #protectedImg {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .highlight {
+        color: var(--primary);
+      }
+
+      .btn {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        background-color: var(--primary);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background-color: #5a52e0;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(108, 99, 255, 0.5);
+      }
+
+      .btn::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: 0.5s;
+      }
+
+      .btn:hover::after {
+        left: 100%;
+      }
+
+      .section {
+        padding: 100px 0;
+      }
+
+      .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      .section-title h2 {
+        font-family: "Montserrat", sans-serif;
+        font-size: 2.5rem;
+        color: var(--dark);
+        margin-bottom: 15px;
+      }
+
+      .section-title p {
+        color: var(--gray);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .about-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+      }
+
+      .about-text h3 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: var(--dark);
+      }
+
+      .about-text p {
+        margin-bottom: 20px;
+        color: #555;
+      }
+
+      .skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .skill {
+        background-color: white;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: 500;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      .about-image img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .edits {
+        background-color: #f9f9fb;
+      }
+
+      .edits-filter {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        background: none;
+        border: none;
+        padding: 10px 20px;
+        margin: 0 5px 10px;
+        font-weight: 600;
+        color: var(--gray);
+        cursor: pointer;
+        transition: all 0.3s;
+        border-radius: 30px;
+      }
+
+      .filter-btn.active,
+      .filter-btn:hover {
+        color: white;
+        background-color: var(--primary);
+      }
+
+      .instagram-feed {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+      }
+
+      .instagram-post {
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s;
+      }
+
+      .instagram-post:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .post-image {
+        height: 250px;
+        overflow: hidden;
+      }
+
+      .post-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+
+      .instagram-post:hover .post-image img {
+        transform: scale(1.05);
+      }
+
+      .post-info {
+        padding: 20px;
+      }
+
+      .post-info h4 {
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+      }
+
+      .post-info p {
+        color: var(--gray);
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+      }
+
+      .post-meta {
+        display: flex;
+        justify-content: space-between;
+        color: var(--gray);
+        font-size: 0.8rem;
+      }
+
+      .contact-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+      }
+
+      .contact-info h3 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: var(--dark);
+      }
+
+      .contact-info p {
+        margin-bottom: 30px;
+        color: #555;
+      }
+
+      .contact-details {
+        margin-bottom: 30px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .contact-item i {
+        background-color: var(--primary);
+        color: white;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-right: 15px;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+      }
+
+      .social-links a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: var(--dark);
+        color: white;
+        border-radius: 50%;
+        text-decoration: none;
+        transition: all 0.3s;
+      }
+
+      .social-links a:hover {
+        background-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .contact-form input,
+      .contact-form textarea {
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .contact-form textarea {
+        height: 150px;
+        resize: vertical;
+      }
+
+      footer {
+        background-color: var(--dark);
+        color: white;
+        padding: 60px 0 30px;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        margin-bottom: 40px;
+      }
+
+      .footer-logo {
+        font-family: "Montserrat", sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+
+      .footer-logo span {
+        color: var(--primary);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 30px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--gray);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 992px) {
+        .about-content,
+        .contact-content {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-content h1 {
+          font-size: 2.8rem;
+        }
+
+        .hero-image-pop.popped {
+          transform: scale(1.5) translateY(-30px);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+
+        .nav-links {
+          position: fixed;
+          top: 70px;
+          right: -100%;
+          flex-direction: column;
+          background-color: var(--dark);
+          width: 100%;
+          text-align: center;
+          transition: 0.3s;
+          box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+          padding: 20px 0;
+        }
+
+        .nav-links.active {
+          right: 0;
+        }
+
+        .nav-links li {
+          margin: 15px 0;
+        }
+
+        .hero-content h1 {
+          font-size: 2.2rem;
+        }
+
+        .section-title h2 {
+          font-size: 2rem;
+        }
+
+        .hero-image-pop.popped {
+          transform: scale(1.3) translateY(-20px);
+        }
+
+        .sound-indicator {
+          top: 80px;
+          right: 20px;
+          font-size: 12px;
+          padding: 8px 12px;
+          cursor: pointer;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .hero-content h1 {
+          font-size: 1.8rem;
+        }
+
+        .instagram-feed {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-image-pop.popped {
+          transform: scale(1.2) translateY(-10px);
+        }
+      }
+
+      #cursorGlow {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        background: rgba(108, 99, 255, 0.4);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        transition: transform 0.1s ease;
+        backdrop-filter: blur(5px);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loader">
+      <img src="images/loading.png" id="loader-logo" />
+      <div id="progress-bar"></div>
+    </div>
+    <div class="sound-indicator" id="soundIndicator">
+      <span id="musicIcon">🎵</span>
+
+      <div class="sound-wave" id="soundWave">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <audio id="backgroundMusic" loop>
+      <source src="music.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+
+    <header id="header">
+      <div class="container">
+        <nav>
+          <a href="index.html" class="logo fade-in"
+            >7<span>T</span> RENDERING</a
+          >
+          <ul class="nav-links">
+            <li><a href="#home" class="fade-in fade-in-delay-1">Home</a></li>
+            <li><a href="#about" class="fade-in fade-in-delay-1">About</a></li>
+            <li>
+              <a href="#edits" class="fade-in fade-in-delay-1">Edits</a>
+            </li>
+            <li>
+              <a href="#contact" class="fade-in fade-in-delay-1">Contact</a>
+            </li>
+          </ul>
+          <div class="hamburger fade-in">
+            <i class="fas fa-bars"></i>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero" id="home">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="fade-in hero-image-pop">
+            Creative <span class="highlight">Video Editor</span> & Motion
+            Designer
+          </h1>
+          <p class="fade-in fade-in-delay-1 hero-image-pop">
+            I transform ideas into engaging visual stories through my editing.
+            Let's bring your vision to life.
+          </p>
+          <a href="#edits" class="btn fade-in fade-in-delay-2 hero-image-pop"
+            >View My Work</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-title">
+          <h2 class="fade-in">About Me</h2>
+          <p class="fade-in fade-in-delay-1">
+            Get to know the creative mind behind the edits
+          </p>
+        </div>
+        <div class="about-content">
+          <div class="about-text">
+            <h3 class="fade-in">
+              Hi, I'm Bishwajit - A Passionate Video Editor
+            </h3>
+            <p class="fade-in fade-in-delay-1">
+              With over 6 years of experience in video editing and
+              post-production, I specialize in creating engaging content and I
+              believe every video has a story to tell, and my job is to make
+              that story shine.
+            </p>
+            <p class="fade-in fade-in-delay-1">
+              I'm experienced with Adobe Premiere Pro and After Effects.
+            </p>
+            <p class="fade-in fade-in-delay-1">
+              When I'm not editing, I'm exploring new techniques, studying film
+              theory, or experimenting with visual effects.
+            </p>
+            <div class="skills">
+              <span class="skill fade-in fade-in-delay-1">Storytelling</span>
+              <span class="skill fade-in fade-in-delay-2">Sound Design</span>
+              <span class="skill fade-in">Color Grading</span>
+              <span class="skill fade-in fade-in-delay-1">Motion Graphics</span>
+              <span class="skill fade-in">Visual Effects</span>
+              <span class="skill fade-in fade-in-delay-2"
+                >Creative Direction</span
+              >
+              <span class="skill fade-in">
+                <img
+                  src="https://www.adobe.com/cc-shared/assets/img/product-icons/svg/premiere-pro.svg"
+                  style="transform: translateY(4px)"
+                  width="18"
+                  alt="Pr"
+                />
+                Adobe Premier Pro</span
+              >
+              <span class="skill fade-in"
+                ><img
+                  src="https://www.adobe.com/cc-shared/assets/img/product-icons/svg/after-effects.svg"
+                  style="transform: translateY(4px)"
+                  width="18"
+                  alt="Ae"
+                />
+                Adobe After Effects</span
+              >
+              <span class="skill fade-in"
+                ><img
+                  src="https://main--cc--adobecom.aem.live/cc-shared/assets/img/product-icons/svg/photoshop.svg"
+                  width="18"
+                  style="transform: translateY(4px)"
+                  alt="Ps"
+                />
+                Adobe Photoshop</span
+              >
+            </div>
+          </div>
+          <div class="about-image fade-in fade-in-delay-2">
+            <img
+              src="images/dp.png"
+              id="protectedImg"
+              draggable="false"
+              alt="Video Editor at Work"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section edits" id="edits">
+      <div class="container">
+        <div class="section-title">
+          <h2 class="fade-in">My Edits</h2>
+          <p class="fade-in fade-in-delay-1">
+            Check out my latest video edits from Instagram
+          </p>
+        </div>
+        <div class="edits-filter">
+          <button class="filter-btn active fade-in" data-filter="all">
+            All
+          </button>
+          <button
+            class="filter-btn fade-in fade-in-delay-1"
+            data-filter="music"
+          >
+            Music Videos
+          </button>
+          <button
+            class="filter-btn fade-in fade-in-delay-2"
+            data-filter="social"
+          >
+            Social Media
+          </button>
+        </div>
+        <div class="instagram-feed" id="instagramFeed">
+          <div class="instagram-post fade-in" data-category="social">
+            <div class="post-image">
+              <a
+                href="https://www.instagram.com/p/C8PweZDtD5m/"
+                target="_blank"
+              >
+                <img src="images/instagram/1.png" alt="Social Media Edit" />
+              </a>
+            </div>
+            <div class="post-info">
+              <h4>Dhurwa Dam - Summer 2024</h4>
+              <p>Husn</p>
+              <div class="post-meta">
+                <span><i class="far fa-heart"></i> 80</span>
+                <span><i class="far fa-comment"></i> 2</span>
+                <span>15 June 2024</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="instagram-post fade-in fade-in-delay-1"
+            data-category="music"
+          >
+            <div class="post-image">
+              <a
+                href="https://www.instagram.com/reels/C3xTihztDe_/"
+                target="_blank"
+              >
+                <img src="images/instagram/2.png" alt="Music Video Edit" />
+              </a>
+            </div>
+            <div class="post-info">
+              <h4>Wild Waadi Water Park - Winter 2024</h4>
+              <p>Find Beauty in Every Moment 🌸</p>
+              <div class="post-meta">
+                <span><i class="far fa-heart"></i> 67</span>
+                <span><i class="far fa-comment"></i> 2</span>
+                <span>25 February 2024</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="instagram-post fade-in fade-in-delay-1"
+            data-category="social"
+          >
+            <div class="post-image">
+              <a
+                href="https://www.instagram.com/p/Cz5Hicgq73p/"
+                target="_blank"
+              >
+                <img src="images/instagram/3.png" alt="Social Media Edit" />
+              </a>
+            </div>
+            <div class="post-info">
+              <h4>Ft. Myself</h4>
+              <p>✌️</p>
+              <div class="post-meta">
+                <span><i class="far fa-heart"></i> 111</span>
+                <span><i class="far fa-comment"></i> 3</span>
+                <span>21 November 2023</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="instagram-post fade-in fade-in-delay-2"
+            data-category="social"
+          >
+            <div class="post-image">
+              <a
+                href="https://www.instagram.com/p/CsP7cGTJm6d/"
+                target="_blank"
+              >
+                <img src="images/instagram/4.png" alt="Social Media Edit" />
+              </a>
+            </div>
+            <div class="post-info">
+              <h4>Reel AMV</h4>
+              <p>Khwahish</p>
+              <div class="post-meta">
+                <span><i class="far fa-heart"></i> 81</span>
+                <span><i class="far fa-comment"></i> 0</span>
+                <span>15 May 2023</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="instagram-post fade-in fade-in-delay-2"
+            data-category="social"
+          >
+            <div class="post-image">
+              <a
+                href="https://www.instagram.com/p/CqOfBrbgKqa/"
+                target="_blank"
+              >
+                <img src="images/instagram/5.png" alt="Social Media Edit" />
+              </a>
+            </div>
+            <div class="post-info">
+              <h4>Happy Birthday to me! 🎉</h4>
+              <p>On & On</p>
+              <div class="post-meta">
+                <span><i class="far fa-heart"></i> 101</span>
+                <span><i class="far fa-comment"></i> 3</span>
+                <span>26 March 2023</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="instagram-post fade-in fade-in-delay-2"
+            data-category="social"
+          >
+            <div class="post-image">
+              <a
+                href="https://www.instagram.com/p/CqFC-Lhpt-3/"
+                target="_blank"
+              >
+                <img src="images/instagram/6.png" alt="Social Media Edit" />
+              </a>
+            </div>
+            <div class="post-info">
+              <h4>Reel AMV</h4>
+              <p>Wildest Dreams</p>
+              <div class="post-meta">
+                <span><i class="far fa-heart"></i> 385</span>
+                <span><i class="far fa-comment"></i> 4</span>
+                <span>22 March 2023</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <center>
+        <a href="instagram.html" class="btn fade-in fade-in-delay-2"
+          >Instagram</a
+        >
+        <a href="youtube.html" class="btn fade-in fade-in-delay-2">Youtube</a>
+      </center>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="section-title">
+          <h2 class="fade-in">Let's Work Together</h2>
+          <p class="fade-in fade-in-delay-1">
+            Have a project in mind? Get in touch!
+          </p>
+        </div>
+        <div class="contact-content">
+          <div class="contact-info">
+            <h3 class="fade-in">Get in Touch</h3>
+            <p class="fade-in fade-in-delay-1">
+              I'm always open to discussing new projects, creative ideas, or
+              opportunities to be part of your vision. Reach out and let's
+              create something amazing together.
+            </p>
+            <div class="contact-details">
+              <div class="contact-item fade-in">
+                <i class="fas fa-envelope"></i>
+                <div>
+                  <h4>Email</h4>
+                  <p>dm@7trendering.com</p>
+                </div>
+              </div>
+              <div class="contact-item fade-in fade-in-delay-1">
+                <i class="fas fa-phone"></i>
+                <div>
+                  <h4>Phone</h4>
+                  <p>+91 995588XXXX</p>
+                </div>
+              </div>
+              <div class="contact-item fade-in fade-in-delay-2">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                  <h4>Location</h4>
+                  <p>Ranchi, JH</p>
+                </div>
+              </div>
+            </div>
+            <div class="social-links">
+              <a
+                href="https://instagram.com/7t_rendering"
+                target="_blank"
+                class="fade-in"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a
+                href="https://youtube.com/@7trendering"
+                target="_blank"
+                class="fade-in fade-in-delay-1"
+                ><i class="fab fa-youtube"></i
+              ></a>
+              <a
+                href="https://discord.gg/qrqDE7fyys"
+                target="_blank"
+                class="fade-in fade-in-delay-1"
+                ><i class="fab fa-discord"></i
+              ></a>
+              <a href="" target="_blank" class="fade-in fade-in-delay-2"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+            </div>
+          </div>
+          <div class="contact-form fade-in fade-in-delay-2">
+            <form id="contactForm">
+              <input
+                type="text"
+                id="name"
+                placeholder="Your Name"
+                required
+                class="fade-in"
+              />
+              <input
+                type="email"
+                id="email"
+                placeholder="Your Email"
+                required
+                class="fade-in fade-in-delay-1"
+              />
+              <input
+                type="text"
+                id="subject"
+                placeholder="Subject"
+                required
+                class="fade-in fade-in-delay-1"
+              />
+              <textarea
+                id="message"
+                placeholder="Your Message"
+                required
+                class="fade-in fade-in-delay-2"
+              ></textarea>
+              <div
+                class="cf-turnstile"
+                data-sitekey="0x4AAAAAADYlupTRb46CI1Vc"
+              ></div>
+              <button
+                type="submit"
+                class="btn fade-in fade-in-delay-2"
+                id="submitBtn"
+              >
+                <i class="fas fa-paper-plane"></i> Send Message
+              </button>
+              <p
+                style="
+                  font-size: 0.9rem;
+                  color: #666;
+                  margin-top: 10px;
+                  text-align: center;
+                "
+              >
+                <i class="fas fa-shield-alt"></i> Your message will be sent
+                securely
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div>
+            <div class="footer-logo fade-in">7<span>T</span> RENDERING</div>
+            <p class="fade-in fade-in-delay-1">
+              Creating compelling visual stories through expert video editing
+              and motion design.
+            </p>
+          </div>
+          <div>
+            <h4 class="fade-in">Quick Links</h4>
+            <ul style="list-style: none; margin-top: 15px">
+              <li>
+                <a
+                  href="#home"
+                  style="
+                    color: #ddd;
+                    text-decoration: none;
+                    margin-bottom: 10px;
+                    display: block;
+                  "
+                  class="fade-in fade-in-delay-1"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#about"
+                  style="
+                    color: #ddd;
+                    text-decoration: none;
+                    margin-bottom: 10px;
+                    display: block;
+                  "
+                  class="fade-in fade-in-delay-1"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#edits"
+                  style="
+                    color: #ddd;
+                    text-decoration: none;
+                    margin-bottom: 10px;
+                    display: block;
+                  "
+                  class="fade-in fade-in-delay-2"
+                  >Edits</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#contact"
+                  style="
+                    color: #ddd;
+                    text-decoration: none;
+                    margin-bottom: 10px;
+                    display: block;
+                  "
+                  class="fade-in fade-in-delay-2"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="fade-in">Services</h4>
+            <ul style="list-style: none; margin-top: 15px">
+              <li style="color: #ddd; margin-bottom: 10px" class="fade-in">
+                Video Editing
+              </li>
+              <li
+                style="color: #ddd; margin-bottom: 10px"
+                class="fade-in fade-in-delay-1"
+              >
+                Motion Graphics
+              </li>
+              <li
+                style="color: #ddd; margin-bottom: 10px"
+                class="fade-in fade-in-delay-2"
+              >
+                Sound Design
+              </li>
+              <li
+                style="color: #ddd; margin-bottom: 10px"
+                class="fade-in fade-in-delay-1"
+              >
+                Color Grading
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p class="fade-in">
+            &copy; 2026 7T RENDERING. All Rights Reserved. <br /><br />
+            Music credits: Official Track:
+            <a href="https://music.apple.com/us/song/timeless/1770380890"
+              >Timeless</a
+            >
+            — by The Weeknd & Playboi Carti
+            <br />
+            Remix:
+            <a href="https://on.soundcloud.com/dOmulYFxeFhWTBegLu"
+              >Tasty Or Not</a
+            >
+            <br /><br />
+            This track is used for background purposes only.
+            <br />
+            All rights to the music belong to their respective owners. No
+            copyright infringement intended.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script>
+      const backgroundMusic = document.getElementById("backgroundMusic");
+      const soundIndicator = document.getElementById("soundIndicator");
+      const body = document.body;
+      const heroSection = document.getElementById("home");
+      const soundIndicatorBox = document.getElementById("soundIndicator");
+      let isPopped = false;
+      let clickedOnce = false;
+
+      document.querySelectorAll(".hero-image-pop.btn").forEach((element) => {
+        element.addEventListener("click", function (event) {
+          event.stopPropagation();
+
+          if (!isPopped) {
+            document.querySelectorAll(".hero-image-pop").forEach((el) => {
+              el.classList.add("popped");
+            });
+
+            if (!clickedOnce) {
+              backgroundMusic.volume = 0.75;
+              clickedOnce = true;
+              setTimeout(() => {
+                playMusic();
+              }, 100);
+            } else {
+              playMusic();
+            }
+
+            isPopped = true;
+          }
+        });
+      });
+
+      function playMusic() {
+        backgroundMusic
+          .play()
+          .then(() => {
+            soundIndicator.classList.add("active");
+
+            document.getElementById("soundWave").classList.remove("paused");
+            document.getElementById("musicIcon").textContent = "🎵";
+          })
+          .catch((error) => {
+            console.log("Audio play failed:", error);
+          });
+      }
+
+      soundIndicatorBox.addEventListener("click", function (e) {
+        e.stopPropagation();
+
+        const soundWave = document.getElementById("soundWave");
+        const musicIcon = document.getElementById("musicIcon");
+
+        if (backgroundMusic.paused) {
+          backgroundMusic.play().then(() => {
+            soundWave.classList.remove("paused");
+            musicIcon.textContent = "🎵";
+          });
+        } else {
+          backgroundMusic.pause();
+
+          soundWave.classList.add("paused");
+          musicIcon.textContent = "🔇";
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && isPopped) {
+          backgroundMusic.pause();
+          backgroundMusic.currentTime = 0;
+          soundIndicator.classList.remove("active");
+
+          document.getElementById("soundWave").classList.add("paused");
+          document.getElementById("musicIcon").textContent = "🔇";
+
+          document.querySelectorAll(".hero-image-pop").forEach((el) => {
+            el.classList.remove("popped");
+          });
+          isPopped = false;
+        }
+      });
+
+      const hamburger = document.querySelector(".hamburger");
+      const navLinks = document.querySelector(".nav-links");
+
+      hamburger.addEventListener("click", () => {
+        navLinks.classList.toggle("active");
+      });
+
+      document.addEventListener("click", (e) => {
+        const isClickInsideMenu = navLinks.contains(e.target);
+        const isHamburger = hamburger.contains(e.target);
+
+        if (!isClickInsideMenu && !isHamburger) {
+          navLinks.classList.remove("active");
+        }
+      });
+
+      window.addEventListener("scroll", () => {
+        navLinks.classList.remove("active");
+      });
+      document.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", () => {
+          navLinks.classList.remove("active");
+        });
+      });
+
+      window.addEventListener("scroll", () => {
+        const header = document.getElementById("header");
+        if (window.scrollY > 50) {
+          header.classList.add("scrolled");
+        } else {
+          header.classList.remove("scrolled");
+        }
+      });
+
+      const filterButtons = document.querySelectorAll(".filter-btn");
+      const editsItems = document.querySelectorAll(".instagram-post");
+
+      filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          filterButtons.forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+
+          const filterValue = button.getAttribute("data-filter");
+
+          editsItems.forEach((item) => {
+            if (
+              filterValue === "all" ||
+              item.getAttribute("data-category") === filterValue
+            ) {
+              item.style.display = "block";
+            } else {
+              item.style.display = "none";
+            }
+          });
+        });
+      });
+
+      emailjs.init("7Siao0KKSSO8OFjxQ");
+
+      document
+        .getElementById("contactForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const submitBtn = document.getElementById("submitBtn");
+          const originalText = submitBtn.innerHTML;
+
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Sending...';
+          submitBtn.disabled = true;
+
+          const turnstileResponse = document.querySelector(
+            '[name="cf-turnstile-response"]',
+          ).value;
+
+          if (!turnstileResponse) {
+            alert("Please verify that you are human.");
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            return;
+          }
+
+          emailjs
+            .send("service_b5h7o3p", "template_7b1yr4z", {
+              name: document.getElementById("name").value,
+              email: document.getElementById("email").value,
+              subject: document.getElementById("subject").value,
+              message: document.getElementById("message").value,
+            })
+            .then(() => {
+              confetti({
+                particleCount: 120,
+                spread: 70,
+                origin: { y: 0.6 },
+              });
+
+              submitBtn.innerHTML =
+                '<i class="fas fa-check"></i> Sent Successfully!';
+
+              document.getElementById("contactForm").reset();
+
+              setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+              }, 3000);
+            })
+            .catch((error) => {
+              console.error(error);
+
+              submitBtn.innerHTML =
+                '<i class="fas fa-times"></i> Failed to Send';
+
+              setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+              }, 3000);
+            });
+        });
+
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          const targetId = this.getAttribute("href");
+          if (targetId === "#") return;
+
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80,
+              behavior: "smooth",
+            });
+          }
+        });
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const fadeElements = document.querySelectorAll(".fade-in");
+
+        const fadeInOnScroll = () => {
+          fadeElements.forEach((element) => {
+            const elementTop = element.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+
+            if (elementTop < windowHeight - 100) {
+              element.style.opacity = 1;
+              element.style.transform = "translateY(0)";
+              element.style.animation =
+                "fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards";
+            }
+          });
+        };
+
+        fadeInOnScroll();
+
+        window.addEventListener("scroll", fadeInOnScroll);
+      });
+
+      const cursor = document.getElementById("cursorGlow");
+
+      document.addEventListener("mousemove", (e) => {
+        cursor.style.left = e.clientX + "px";
+        cursor.style.top = e.clientY + "px";
+      });
+
+      document.querySelectorAll(".btn").forEach((btn) => {
+        btn.addEventListener("mousemove", (e) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+
+          btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+        });
+
+        btn.addEventListener("mouseleave", () => {
+          btn.style.transform = "translate(0, 0)";
+        });
+      });
+
+      const loader = document.getElementById("loader");
+      const progressBar = document.getElementById("progress-bar");
+
+      let resources = performance.getEntriesByType("resource");
+      let totalResources = resources.length;
+      let loadedResources = 0;
+
+      if (totalResources === 0) totalResources = 10;
+
+      function updateProgress() {
+        loadedResources++;
+        let percent = (loadedResources / totalResources) * 100;
+        progressBar.style.width = percent + "%";
+
+        if (loadedResources >= totalResources) {
+          setTimeout(() => {
+            loader.style.opacity = "0";
+            loader.style.visibility = "hidden";
+          }, 300);
+        }
+      }
+
+      resources.forEach((resource) => {
+        const img = new Image();
+        img.src = resource.name;
+        img.onload = updateProgress;
+        img.onerror = updateProgress;
+      });
+
+      window.addEventListener("load", () => {
+        progressBar.style.width = "100%";
+
+        setTimeout(() => {
+          loader.style.opacity = "0";
+          loader.style.visibility = "hidden";
+        }, 500);
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          let fadeOut = setInterval(() => {
+            if (backgroundMusic.volume > 0) {
+              backgroundMusic.volume = Math.max(
+                0,
+                backgroundMusic.volume - 0.07,
+              );
+            } else {
+              clearInterval(fadeOut);
+
+              backgroundMusic.pause();
+
+              document.getElementById("soundWave").classList.add("paused");
+              document.getElementById("musicIcon").textContent = "🔇";
+            }
+          }, 40);
+        } else {
+          if (isPopped) {
+            backgroundMusic
+              .play()
+              .then(() => {
+                document.getElementById("soundWave").classList.remove("paused");
+                document.getElementById("musicIcon").textContent = "🎵";
+              })
+              .catch((err) => {
+                console.log("Playback blocked:", err);
+              });
+            let fadeIn = setInterval(() => {
+              if (backgroundMusic.volume < 0.75) {
+                backgroundMusic.volume += 0.03;
+              } else {
+                backgroundMusic.volume = 0.75;
+                clearInterval(fadeIn);
+              }
+            }, 50);
+          }
+        }
+      });
+    </script>
+    <div id="cursorGlow"></div>
+  </body>
+</html>
