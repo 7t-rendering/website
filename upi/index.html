@@ -39,9 +39,7 @@
         );
         min-height: 100vh;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 30px;
+        flex-direction: column;
         color: white;
       }
 
@@ -181,45 +179,70 @@
           width: 100%;
         }
       }
+
+      .main {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+      }
+
+      footer {
+        text-align: center;
+        padding: 20px;
+        color: var(--gray);
+        font-size: 14px;
+      }
     </style>
   </head>
   <body>
-    <div class="card">
-      <div class="logo">7<span>T</span> RENDERING</div>
+    <div class="main">
+      <div class="card">
+        <div class="logo">7<span>T</span> RENDERING</div>
 
-      <h2>Scan and Pay</h2>
+        <h2>Scan and Pay</h2>
 
-      <div class="qr">
-        <img src="/assets/upi-qr.png" alt="UPI QR Code" />
+        <div class="qr">
+          <img src="/assets/upi-qr.png" alt="UPI QR Code" />
+        </div>
+
+        <p class="subtitle">BISHWAJIT MUNDA</p>
+
+        <div class="upi-box">
+          <h4>UPI ID</h4>
+          <div class="upi" id="upi">0.00000000@ybl</div>
+        </div>
+
+        <div class="buttons">
+          <button id="copyBtn" class="btn" onclick="copyUPI()">
+            Copy UPI ID
+          </button>
+
+          <audio id="copySound" preload="auto">
+            <source src="/assets/audio/copied.mp3" type="audio/mpeg" />
+          </audio>
+
+          <a href="/index.html" class="btn"> Back to Home </a>
+        </div>
+
+        <div class="footer">Secure payments via any UPI app.</div>
       </div>
-
-      <p class="subtitle">BISHWAJIT MUNDA</p>
-
-      <div class="upi-box">
-        <h4>UPI ID</h4>
-
-        <div class="upi" id="upi">0.00000000@ybl</div>
-      </div>
-
-      <div class="buttons">
-        <button id="copyBtn" class="btn" onclick="copyUPI()">
-          Copy UPI ID
-        </button>
-
-        <a href="/index.html" class="btn"> Back to Home </a>
-      </div>
-
-      <div class="footer">Secure payments via any UPI app.</div>
     </div>
+
+    <footer>&copy; 2026 7T RENDERING. All Rights Reserved.</footer>
 
     <script>
       function copyUPI() {
         const upi = document.getElementById("upi").textContent;
         const btn = document.getElementById("copyBtn");
+        const sound = document.getElementById("copySound");
 
         navigator.clipboard.writeText(upi).then(() => {
-          const originalText = btn.innerHTML;
+          sound.currentTime = 0;
+          sound.play().catch(() => {});
 
+          const originalText = btn.innerHTML;
           btn.innerHTML = "✅ Copied!";
 
           setTimeout(() => {
