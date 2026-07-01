@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Support • 7T RENDERING</title>
+
+    <link rel="icon" href="images/logo.ico" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #6c63ff;
+        --secondary: #ff6584;
+        --dark: #1a1a2e;
+        --light: #f5f5f7;
+        --gray: #8a8aa3;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(
+          rgba(26, 26, 46, 0.95),
+          rgba(26, 26, 46, 0.98)
+        );
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+        color: white;
+      }
+
+      .card {
+        background: #23233a;
+        width: 100%;
+        max-width: 480px;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      }
+
+      .logo {
+        font-family: "Montserrat", sans-serif;
+        font-size: 34px;
+        margin-bottom: 10px;
+      }
+
+      .logo span {
+        color: var(--primary);
+      }
+
+      h2 {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-size: 30px;
+      }
+
+      .subtitle {
+        color: #cccccc;
+        margin-bottom: 30px;
+      }
+
+      .qr {
+        background: #23233a;
+        padding: 18px;
+        border-radius: 15px;
+        display: inline-block;
+      }
+
+      .qr img {
+        width: 260px;
+        display: block;
+      }
+
+      .upi-box {
+        margin-top: 30px;
+
+        background: #2c2c48;
+
+        padding: 15px;
+
+        border-radius: 12px;
+      }
+
+      .upi-box h4 {
+        margin-bottom: 8px;
+        color: #ddd;
+      }
+
+      .upi {
+        font-weight: 600;
+        font-size: 18px;
+        color: var(--primary);
+
+        word-break: break-all;
+      }
+
+      .buttons {
+        margin-top: 30px;
+
+        display: flex;
+
+        gap: 15px;
+
+        justify-content: center;
+
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-block;
+
+        padding: 13px 28px;
+
+        border-radius: 30px;
+
+        background: var(--primary);
+
+        color: white;
+
+        text-decoration: none;
+
+        font-weight: 600;
+
+        transition: 0.3s;
+
+        cursor: pointer;
+
+        border: none;
+
+        font-family: inherit;
+      }
+
+      .btn:hover {
+        background: #5a52e0;
+
+        transform: translateY(-3px);
+
+        box-shadow: 0 12px 25px rgba(108, 99, 255, 0.45);
+      }
+
+      .footer {
+        margin-top: 30px;
+
+        font-size: 14px;
+
+        color: var(--gray);
+      }
+
+      @media (max-width: 500px) {
+        .card {
+          padding: 25px;
+        }
+
+        .qr img {
+          width: 220px;
+        }
+
+        .buttons {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="logo">7<span>T</span> RENDERING</div>
+
+      <h2>Scan and Pay</h2>
+
+      <div class="qr">
+        <img src="/assets/upi-qr.png" alt="UPI QR Code" />
+      </div>
+
+      <p class="subtitle">BISHWAJIT MUNDA</p>
+
+      <div class="upi-box">
+        <h4>UPI ID</h4>
+
+        <div class="upi" id="upi">0.00000000@ybl</div>
+      </div>
+
+      <div class="buttons">
+        <button id="copyBtn" class="btn" onclick="copyUPI()">
+          Copy UPI ID
+        </button>
+
+        <a href="/index.html" class="btn"> Back to Home </a>
+      </div>
+
+      <div class="footer">Secure payments via any UPI app.</div>
+    </div>
+
+    <script>
+      function copyUPI() {
+        const upi = document.getElementById("upi").textContent;
+        const btn = document.getElementById("copyBtn");
+
+        navigator.clipboard.writeText(upi).then(() => {
+          const originalText = btn.innerHTML;
+
+          btn.innerHTML = "✅ Copied!";
+
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+          }, 2000);
+        });
+      }
+    </script>
+  </body>
+</html>
